@@ -63,6 +63,7 @@ static void libc_start_init(void)
 
 weak_alias(libc_start_init, __libc_start_init);
 
+#ifndef CONFIG_LKL
 int __libc_start_main(int (*main)(int,char **,char **), int argc, char **argv)
 {
 	char **envp = argv+argc+1;
@@ -74,3 +75,4 @@ int __libc_start_main(int (*main)(int,char **,char **), int argc, char **argv)
 	exit(main(argc, argv, envp));
 	return 0;
 }
+#endif

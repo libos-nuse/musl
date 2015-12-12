@@ -31,7 +31,7 @@ CFLAGS =
 CFLAGS_AUTO = -Os -pipe
 CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc 
 
-CFLAGS_ALL = $(CFLAGS_C99FSE)
+CFLAGS_ALL = $(CFLAGS_C99FSE) $(CFLAGS_LKL)
 CFLAGS_ALL += -D_XOPEN_SOURCE=700 -I./arch/$(ARCH) -I./src/internal -I./include
 CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS)
 CFLAGS_ALL_STATIC = $(CFLAGS_ALL)
@@ -61,6 +61,9 @@ WRAPCC_CLANG = clang
 LDSO_PATHNAME = $(syslibdir)/ld-musl-$(ARCH)$(SUBARCH).so.1
 
 -include config.mak
+
+# exclude some files for frankenlibc
+SRCS := $(filter-out $(LKL_EXCLUDE),$(sort $(wildcard $(SRCS) $(LKL_INCLUDE))))
 
 all: $(ALL_LIBS) $(ALL_TOOLS)
 

@@ -22,6 +22,7 @@ Fine tuning of the installation directories:
 System types:
   --target=TARGET         configure to run on target TARGET [detected]
   --host=HOST             same as --target
+  --with-lkl=DIR          configure the location of lkl header [none]
 
 Optional features:
   --enable-optimize=...   optimize listed components for speed over size [auto]
@@ -114,9 +115,12 @@ CFLAGS_AUTO=
 CFLAGS_MEMOPS=
 CFLAGS_NOSSP=
 CFLAGS_TRY=
+CFLAGS_LKL=
 LDFLAGS_AUTO=
 LDFLAGS_TRY=
 OPTIMIZE_GLOBS=
+LKL_INCLUDE=
+LKL_EXCLUDE=
 prefix=/usr/local/musl
 exec_prefix='$(prefix)'
 bindir='$(exec_prefix)/bin'
@@ -126,6 +130,7 @@ syslibdir='/lib'
 tools=
 tool_libs=
 target=
+lkl_dir=
 optimize=auto
 debug=no
 warnings=no
@@ -165,6 +170,7 @@ case "$arg" in
 --disable-wrapper|--enable-wrapper=no) wrapper=no ;;
 --enable-gcc-wrapper|--enable-gcc-wrapper=yes) wrapper=yes ; gcc_wrapper=yes ;;
 --disable-gcc-wrapper|--enable-gcc-wrapper=no) wrapper=no ;;
+--with-lkl=*) lkl_dir=${arg#*=} ;;
 --enable-*|--disable-*|--with-*|--without-*|--*dir=*|--build=*) ;;
 --host=*|--target=*) target=${arg#*=} ;;
 -* ) echo "$0: unknown option $arg" ;;
@@ -296,6 +302,36 @@ sh[1-9bel-]*|sh|superh*) ARCH=sh ;;
 unknown) fail "$0: unable to detect target arch; try $0 --target=..." ;;
 *) fail "$0: unknown or unsupported target \"$target\"" ;;
 esac
+
+#
+# Configure LKL (linux kernel library) options
+#
+printf "checking for header files of linux kernel library (lkl)... "
+if test -d "$lkl_dir" && test -f "$lkl_dir/usr/include/asm/syscalls.h" ; then
+printf "yes\n"
+
+CFLAGS_LKL="-DCONFIG_LKL -I./arch/lkl -I$lkl_dir/usr/include"
+LKL_EXCLUDE="src/mman/% src/malloc/% src/unistd/_exit.c\
+ src/exit/_Exit.c\
+ src/thread/__syscall_cp.c src/signal/kill.c src/process/%\
+ src/locale/dcngettext.c src/locale/locale_map.c\
+ src/errno/__errno_location.c\
+ src/misc/getpriority.c src/misc/setpriority.c"
+
+if test "$ARCH" = x86_64 ; then
+LKL_EXCLUDE="$LKL_EXCLUDE %syscall_ret.c"
+fi
+if test "$ARCH" = arm ; then
+LKL_EXCLUDE="$LKL_EXCLUDE src/thread/__set_thread_area.c"
+echo "";
+fi
+
+LKL_INCLUDE="arch/lkl/src/*"
+
+else
+printf "no\n"
+fail "$0: error: cannot find lkl header file shared library at $lkl_dir"
+fi
 
 #
 # Try to get a conforming C99 freestanding environment
@@ -669,6 +705,9 @@ OPTIMIZE_GLOBS = $OPTIMIZE_GLOBS
 ALL_TOOLS = $tools
 TOOL_LIBS = $tool_libs
 ADD_CFI = $ADD_CFI
+LKL_INCLUDE = $LKL_INCLUDE
+LKL_EXCLUDE = $LKL_EXCLUDE
+CFLAGS_LKL = $CFLAGS_LKL
 EOF
 test "x$static" = xno && echo "STATIC_LIBS ="
 test "x$shared" = xno && echo "SHARED_LIBS ="
