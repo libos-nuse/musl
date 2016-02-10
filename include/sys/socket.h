@@ -96,6 +96,7 @@ struct linger
 #define PF_WANPIPE      25
 #define PF_LLC          26
 #define PF_IB           27
+#define PF_MPLS         28
 #define PF_CAN          29
 #define PF_TIPC         30
 #define PF_BLUETOOTH    31
@@ -141,6 +142,7 @@ struct linger
 #define AF_WANPIPE      PF_WANPIPE
 #define AF_LLC          PF_LLC
 #define AF_IB           PF_IB
+#define AF_MPLS         PF_MPLS
 #define AF_CAN          PF_CAN
 #define AF_TIPC         PF_TIPC
 #define AF_BLUETOOTH    PF_BLUETOOTH
@@ -255,6 +257,7 @@ struct linger
 #define MSG_NOSIGNAL  0x4000
 #define MSG_MORE      0x8000
 #define MSG_WAITFORONE 0x10000
+#define MSG_FASTOPEN  0x20000000
 #define MSG_CMSG_CLOEXEC 0x40000000
 
 #define __CMSG_LEN(cmsg) (((cmsg)->cmsg_len + sizeof(long) - 1) & ~(long)(sizeof(long) - 1))

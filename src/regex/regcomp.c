@@ -708,7 +708,7 @@ static const char *parse_dup_count(const char *s, int *n)
 	return s;
 }
 
-static reg_errcode_t parse_dup(tre_parse_ctx_t *ctx, const char *s)
+static const char *parse_dup(const char *s, int ere, int *pmin, int *pmax)
 {
 	int min, max;
 
@@ -723,19 +723,13 @@ static reg_errcode_t parse_dup(tre_parse_ctx_t *ctx, const char *s)
 		max > RE_DUP_MAX ||
 		min > RE_DUP_MAX ||
 		min < 0 ||
-		(!(ctx->cflags & REG_EXTENDED) && *s++ != '\\') ||
+		(!ere && *s++ != '\\') ||
 		*s++ != '}'
 	)
-		return REG_BADBR;
-
-	if (min == 0 && max == 0)
-		ctx->n = tre_ast_new_literal(ctx->mem, EMPTY, -1, -1);
-	else
-		ctx->n = tre_ast_new_iter(ctx->mem, ctx->n, min, max, 0);
-	if (!ctx->n)
-		return REG_ESPACE;
-	ctx->s = s;
-	return REG_OK;
+		return 0;
+	*pmin = min;
+	*pmax = max;
+	return s;
 }
 
 static int hexval(unsigned c)
@@ -834,22 +828,35 @@ static reg_errcode_t parse_atom(tre_parse_ctx_t *ctx, const char *s)
 					return REG_EBRACE;
 				s++;
 			}
-			node = tre_ast_new_literal(ctx->mem, v, v, ctx->position);
-			ctx->position++;
+			node = tre_ast_new_literal(ctx->mem, v, v, ctx->position++);
 			s--;
 			break;
+		case '{':
+		case '+':
+		case '?':
+			/* extension: treat \+, \? as repetitions in BRE */
+			/* reject repetitions after empty expression in BRE */
+			if (!ere)
+				return REG_BADRPT;
+		case '|':
+			/* extension: treat \| as alternation in BRE */
+			if (!ere) {
+				node = tre_ast_new_literal(ctx->mem, EMPTY, -1, -1);
+				s--;
+				goto end;
+			}
+			/* fallthrough */
 		default:
 			if (!ere && (unsigned)*s-'1' < 9) {
 				/* back reference */
 				int val = *s - '0';
-				node = tre_ast_new_literal(ctx->mem, BACKREF, val, ctx->position);
+				node = tre_ast_new_literal(ctx->mem, BACKREF, val, ctx->position++);
 				ctx->max_backref = MAX(val, ctx->max_backref);
 			} else {
 				/* extension: accept unknown escaped char
 				   as a literal */
 				goto parse_literal;
 			}
-			ctx->position++;
 		}
 		s++;
 		break;
@@ -882,10 +889,14 @@ static reg_errcode_t parse_atom(tre_parse_ctx_t *ctx, const char *s)
 		s++;
 		break;
 	case '*':
-	case '|':
+		return REG_BADPAT;
 	case '{':
 	case '+':
 	case '?':
+		/* reject repetitions after empty expression in ERE */
+		if (ere)
+			return REG_BADRPT;
+	case '|':
 		if (!ere)
 			goto parse_literal;
 	case 0:
@@ -912,6 +923,7 @@ parse_literal:
 		s += len;
 		break;
 	}
+end:
 	if (!node)
 		return REG_ESPACE;
 	ctx->n = node;
@@ -966,56 +978,69 @@ static reg_errcode_t tre_parse(tre_parse_ctx_t *ctx)
 		}
 
 	parse_iter:
-		/* extension: repetitions are accepted after an empty node
-		   eg. (+), ^*, a$?, a|{2} */
-		switch (*s) {
-		case '+':
-		case '?':
-			if (!ere)
+		/* extension: repetitions are rejected after an empty node
+		   eg. (+), |*, {2}, but assertions are not treated as empty
+		   so ^* or $? are accepted currently. */
+		for (;;) {
+			int min, max;
+
+			if (*s!='\\' && *s!='*') {
+				if (!ere)
+					break;
+				if (*s!='+' && *s!='?' && *s!='{')
+					break;
+			}
+			if (*s=='\\' && ere)
 				break;
-			/* fallthrough */
-		case '*':;
-			int min=0, max=-1;
-			if (*s == '+')
-				min = 1;
-			if (*s == '?')
-				max = 1;
-			s++;
-			ctx->n = tre_ast_new_iter(ctx->mem, ctx->n, min, max, 0);
-			if (!ctx->n)
-				return REG_ESPACE;
+			/* extension: treat \+, \? as repetitions in BRE */
+			if (*s=='\\' && s[1]!='+' && s[1]!='?' && s[1]!='{')
+				break;
+			if (*s=='\\')
+				s++;
+
 			/* extension: multiple consecutive *+?{,} is unspecified,
 			   but (a+)+ has to be supported so accepting a++ makes
 			   sense, note however that the RE_DUP_MAX limit can be
 			   circumvented: (a{255}){255} uses a lot of memory.. */
-			goto parse_iter;
-		case '\\':
-			if (ere || s[1] != '{')
-				break;
-			s++;
-			goto parse_brace;
-		case '{':
-			if (!ere)
-				break;
-		parse_brace:
-			err = parse_dup(ctx, s+1);
-			if (err != REG_OK)
-				return err;
-			s = ctx->s;
-			goto parse_iter;
+			if (*s=='{') {
+				s = parse_dup(s+1, ere, &min, &max);
+				if (!s)
+					return REG_BADBR;
+			} else {
+				min=0;
+				max=-1;
+				if (*s == '+')
+					min = 1;
+				if (*s == '?')
+					max = 1;
+				s++;
+			}
+			if (max == 0)
+				ctx->n = tre_ast_new_literal(ctx->mem, EMPTY, -1, -1);
+			else
+				ctx->n = tre_ast_new_iter(ctx->mem, ctx->n, min, max, 0);
+			if (!ctx->n)
+				return REG_ESPACE;
 		}
 
 		nbranch = tre_ast_new_catenation(ctx->mem, nbranch, ctx->n);
 		if ((ere && *s == '|') ||
 		    (ere && *s == ')' && depth) ||
 		    (!ere && *s == '\\' && s[1] == ')') ||
+		    /* extension: treat \| as alternation in BRE */
+		    (!ere && *s == '\\' && s[1] == '|') ||
 		    !*s) {
 			/* extension: empty branch is unspecified (), (|a), (a|)
 			   here they are not rejected but match on empty string */
 			int c = *s;
 			nunion = tre_ast_new_union(ctx->mem, nunion, nbranch);
 			nbranch = 0;
-			if (c != '|') {
+
+			if (c == '\\' && s[1] == '|') {
+				s+=2;
+			} else if (c == '|') {
+				s++;
+			} else {
 				if (c == '\\') {
 					if (!depth) return REG_EPAREN;
 					s+=2;
@@ -1035,7 +1060,6 @@ static reg_errcode_t tre_parse(tre_parse_ctx_t *ctx)
 				nunion = tre_stack_pop_voidptr(stack);
 				goto parse_iter;
 			}
-			s++;
 		}
 	}
 }
@@ -2664,7 +2688,7 @@ regcomp(regex_t *restrict preg, const char *restrict regex, int cflags)
 
   /* Allocate a stack used throughout the compilation process for various
      purposes. */
-  stack = tre_stack_new(512, 10240, 128);
+  stack = tre_stack_new(512, 1024000, 128);
   if (!stack)
     return REG_ESPACE;
   /* Allocate a fast memory allocator. */

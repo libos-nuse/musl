@@ -321,6 +321,9 @@
 #define __NR_kexec_file_load			320
 #define __NR_bpf				321
 #define __NR_execveat				322
+#define __NR_userfaultfd			323
+#define __NR_membarrier				324
+#define __NR_mlock2				325
 
 
 
@@ -649,3 +652,6 @@
 #define SYS_kexec_file_load			320
 #define SYS_bpf					321
 #define SYS_execveat				322
+#define SYS_userfaultfd				323
+#define SYS_membarrier				324
+#define SYS_mlock2				325

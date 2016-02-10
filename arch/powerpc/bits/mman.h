@@ -4,6 +4,7 @@
 #define	PROT_READ      1
 #define	PROT_WRITE     2
 #define	PROT_EXEC      4
+#define	PROT_SAO       0x10
 #define	PROT_GROWSDOWN 0x01000000
 #define	PROT_GROWSUP   0x02000000
 
@@ -35,8 +36,9 @@
 #define MS_INVALIDATE   2
 #define MS_SYNC         4
 
-#define MCL_CURRENT     1
-#define MCL_FUTURE      2
+#define MCL_CURRENT     0x2000
+#define MCL_FUTURE      0x4000
+#define MCL_ONFAULT     0x8000
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 #define MADV_NORMAL      0

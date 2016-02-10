@@ -27,8 +27,6 @@ extern "C" {
 
 #include <bits/alltypes.h>
 
-#define SIG_HOLD ((void (*)(int)) 2)
-
 #define SIG_BLOCK     0
 #define SIG_UNBLOCK   1
 #define SIG_SETMASK   2
@@ -42,6 +40,18 @@ extern "C" {
 #define SI_QUEUE (-1)
 #define SI_USER 0
 #define SI_KERNEL 128
+
+typedef struct sigaltstack stack_t;
+
+#endif
+
+#include <bits/signal.h>
+
+#if defined(_POSIX_SOURCE) || defined(_POSIX_C_SOURCE) \
+ || defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) \
+ || defined(_BSD_SOURCE)
+
+#define SIG_HOLD ((void (*)(int)) 2)
 
 #define FPE_INTDIV 1
 #define FPE_INTOVF 2
@@ -78,15 +88,17 @@ extern "C" {
 #define CLD_STOPPED 5
 #define CLD_CONTINUED 6
 
-typedef struct sigaltstack stack_t;
-
 union sigval {
 	int sival_int;
 	void *sival_ptr;
 };
 
 typedef struct {
+#ifdef __SI_SWAP_ERRNO_CODE
+	int si_signo, si_code, si_errno;
+#else
 	int si_signo, si_errno, si_code;
+#endif
 	union {
 		char __pad[128 - 2*sizeof(int) - sizeof(long)];
 		struct {
@@ -239,8 +251,6 @@ int sigandset(sigset_t *, const sigset_t *, const sigset_t *);
 #define SA_NOMASK SA_NODEFER
 #define SA_ONESHOT SA_RESETHAND
 #endif
-
-#include <bits/signal.h>
 
 #define SIG_ERR  ((void (*)(int))-1)
 #define SIG_DFL  ((void (*)(int)) 0)

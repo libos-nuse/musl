@@ -265,6 +265,9 @@
 #define __NR_memfd_create 279
 #define __NR_bpf 280
 #define __NR_execveat 281
+#define __NR_userfaultfd 282
+#define __NR_membarrier 283
+#define __NR_mlock2 284
 
 #define SYS_io_setup __NR_io_setup
 #define SYS_io_destroy __NR_io_destroy
@@ -533,3 +536,6 @@
 #define SYS_memfd_create __NR_memfd_create
 #define SYS_bpf __NR_bpf
 #define SYS_execveat __NR_execveat
+#define SYS_userfaultfd __NR_userfaultfd
+#define SYS_membarrier __NR_membarrier
+#define SYS_mlock2 __NR_mlock2
