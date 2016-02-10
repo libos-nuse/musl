@@ -328,22 +328,22 @@ if test -d "$lkl_dir" && test -f "$lkl_dir/usr/include/asm/syscalls.h" ; then
 printf "yes\n"
 
 CFLAGS_LKL="-DCONFIG_LKL -I./arch/lkl -I$lkl_dir/usr/include"
-LKL_EXCLUDE="src/mman/% src/malloc/% src/unistd/_exit.c\
- src/exit/_Exit.c\
- src/thread/__syscall_cp.c src/signal/kill.c \
- src/locale/dcngettext.c src/locale/locale_map.c\
- src/errno/__errno_location.c\
- src/misc/getpriority.c src/misc/setpriority.c"
+LKL_EXCLUDE="$srcdir/src/mman/% $srcdir/src/malloc/% $srcdir/src/unistd/_exit.c\
+ $srcdir/src/exit/_Exit.c\
+ $srcdir/src/thread/__syscall_cp.c $srcdir/src/signal/kill.c \
+ $srcdir/src/locale/dcngettext.c $srcdir/src/locale/locale_map.c\
+ $srcdir/src/errno/__errno_location.c\
+ $srcdir/src/misc/getpriority.c $srcdir/src/misc/setpriority.c"
 
 if test "$ARCH" = x86_64 ; then
 LKL_EXCLUDE="$LKL_EXCLUDE %syscall_ret.c"
 fi
 if test "$ARCH" = arm ; then
-LKL_EXCLUDE="$LKL_EXCLUDE src/thread/__set_thread_area.c"
+LKL_EXCLUDE="$LKL_EXCLUDE $srcdir/src/thread/__set_thread_area.c"
 echo "";
 fi
 
-LKL_INCLUDE="arch/lkl/src/*"
+LKL_INCLUDE="$srcdir/arch/lkl/src/*.c"
 
 else
 printf "no\n"

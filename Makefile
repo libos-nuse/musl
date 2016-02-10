@@ -39,7 +39,7 @@ CFLAGS =
 CFLAGS_AUTO = -Os -pipe
 CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc 
 
-CFLAGS_ALL = $(CFLAGS_C99FSE)$(CFLAGS_LKL)
+CFLAGS_ALL = $(CFLAGS_C99FSE) $(CFLAGS_LKL)
 CFLAGS_ALL += -D_XOPEN_SOURCE=700 -I$(srcdir)/arch/$(ARCH) -I$(srcdir)/arch/generic -Iobj/src/internal -I$(srcdir)/src/internal -Iobj/include -I$(srcdir)/include
 CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS)
 
@@ -75,7 +75,11 @@ $(error Please set ARCH in config.mak before running make.)
 endif
 
 # exclude some files for frankenlibc
-SRCS := $(filter-out $(LKL_EXCLUDE),$(sort $(wildcard $(SRCS) $(LKL_INCLUDE))))
+BASE_SRCS := $(filter-out $(LKL_EXCLUDE),$(sort $(wildcard $(BASE_SRCS) $(LKL_INCLUDE))))
+BASE_OBJS := $(patsubst %.c,%.o,$(BASE_SRCS))
+OBJS := $(addprefix obj/, $(filter-out $(REPLACED_OBJS), $(sort $(BASE_OBJS) $(ARCH_OBJS))))
+AOBJS := $(OBJS)
+LOBJS := $(OBJS:.o=.lo)
 
 all: $(ALL_LIBS) $(ALL_TOOLS)
 
