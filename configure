@@ -329,7 +329,7 @@ printf "yes\n"
 
 CFLAGS_LKL="-DCONFIG_LKL -I./arch/lkl -I$lkl_dir/usr/include"
 LKL_EXCLUDE="$srcdir/src/mman/% $srcdir/src/malloc/% $srcdir/src/unistd/_exit.c\
- $srcdir/src/exit/_Exit.c\
+ $srcdir/src/exit/_Exit.c $srcdir/src/thread/synccall.c\
  $srcdir/src/thread/__syscall_cp.c $srcdir/src/signal/kill.c \
  $srcdir/src/locale/dcngettext.c $srcdir/src/locale/locale_map.c\
  $srcdir/src/errno/__errno_location.c\
