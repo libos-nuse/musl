@@ -35,10 +35,8 @@ void __init_libc(char **envp, char *pn)
 		for (i=0; pn[i]; i++) if (pn[i]=='/') __progname = pn+i+1;
 	}
 
-#ifndef CONFIG_LKL
 	__init_tls(aux);
 	__init_ssp((void *)aux[AT_RANDOM]);
-#endif
 
 	if (aux[AT_UID]==aux[AT_EUID] && aux[AT_GID]==aux[AT_EGID]
 		&& !aux[AT_SECURE]) return;
