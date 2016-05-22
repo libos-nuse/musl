@@ -39,9 +39,9 @@ CFLAGS =
 CFLAGS_AUTO = -Os -pipe
 CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc 
 
-CFLAGS_ALL = $(CFLAGS_C99FSE) $(CFLAGS_LKL)
+CFLAGS_ALL = $(CFLAGS_C99FSE) $(CFLAGS_LKL0)
 CFLAGS_ALL += -D_XOPEN_SOURCE=700 -I$(srcdir)/arch/$(ARCH) -I$(srcdir)/arch/generic -Iobj/src/internal -I$(srcdir)/src/internal -Iobj/include -I$(srcdir)/include
-CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS)
+CFLAGS_ALL += $(CPPFLAGS) $(CFLAGS_AUTO) $(CFLAGS) $(CFLAGS_LKL1)
 
 LDFLAGS_ALL = $(LDFLAGS_AUTO) $(LDFLAGS)
 

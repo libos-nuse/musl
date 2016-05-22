@@ -118,7 +118,8 @@ CFLAGS_AUTO=
 CFLAGS_MEMOPS=
 CFLAGS_NOSSP=
 CFLAGS_TRY=
-CFLAGS_LKL=
+CFLAGS_LKL0=
+CFLAGS_LKL1=
 LDFLAGS_AUTO=
 LDFLAGS_TRY=
 OPTIMIZE_GLOBS=
@@ -327,18 +328,15 @@ printf "checking for header files of linux kernel library (lkl)... "
 if test -d "$lkl_dir" && test -f "$lkl_dir/usr/include/asm/syscalls.h" ; then
 printf "yes\n"
 
-CFLAGS_LKL="-DCONFIG_LKL -I./arch/lkl -I$lkl_dir/usr/include"
+CFLAGS_LKL0="-DCONFIG_LKL -I./arch/lkl"
+CFLAGS_LKL1="-I$lkl_dir/usr/include"
 LKL_EXCLUDE="$srcdir/src/mman/% $srcdir/src/malloc/% $srcdir/src/unistd/_exit.c\
- $srcdir/src/exit/_Exit.c\
  $srcdir/src/internal/syscall.c $srcdir/src/internal/x86_64/syscall.s\
  $srcdir/src/thread/__syscall_cp.c $srcdir/src/signal/kill.c \
  $srcdir/src/locale/dcngettext.c \
  $srcdir/src/errno/__errno_location.c\
  $srcdir/src/misc/getpriority.c $srcdir/src/misc/setpriority.c"
 
-if test "$ARCH" = x86_64 ; then
-LKL_EXCLUDE="$LKL_EXCLUDE %syscall_ret.c"
-fi
 if test "$ARCH" = arm ; then
 LKL_EXCLUDE="$LKL_EXCLUDE $srcdir/src/thread/__set_thread_area.c"
 echo "";
@@ -731,7 +729,8 @@ TOOL_LIBS = $tool_libs
 ADD_CFI = $ADD_CFI
 LKL_INCLUDE = $LKL_INCLUDE
 LKL_EXCLUDE = $LKL_EXCLUDE
-CFLAGS_LKL = $CFLAGS_LKL
+CFLAGS_LKL0 = $CFLAGS_LKL0
+CFLAGS_LKL1 = $CFLAGS_LKL1
 EOF
 test "x$static" = xno && echo "STATIC_LIBS ="
 test "x$shared" = xno && echo "SHARED_LIBS ="
