@@ -335,6 +335,7 @@ LKL_EXCLUDE="$srcdir/src/malloc/% $srcdir/src/unistd/_exit.c\
  $srcdir/src/thread/__syscall_cp.c $srcdir/src/signal/kill.c \
  $srcdir/src/locale/dcngettext.c \
  $srcdir/src/errno/__errno_location.c\
+ $srcdir/src/thread/x86_64/clone.s \
  $srcdir/src/misc/getpriority.c $srcdir/src/misc/setpriority.c"
 
 if test "$ARCH" = arm ; then
