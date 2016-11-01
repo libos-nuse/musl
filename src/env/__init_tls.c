@@ -17,7 +17,9 @@ int __init_tp(void *p)
 	if (r < 0) return -1;
 	if (!r) libc.can_do_threads = 1;
 #else
+	void rumpuser_thread_set_cookie(void *thread, void *cookie);
 	libc.can_do_threads = 1;
+	rumpuser_thread_set_cookie(NULL, td);
 #endif
 	td->tid = __syscall(SYS_set_tid_address, &td->tid);
 	td->locale = &libc.global_locale;
