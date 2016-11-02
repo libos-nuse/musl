@@ -9,4 +9,9 @@ static inline struct pthread *__pthread_self()
 
 #define TP_ADJ(p) (p)
 
+
+#ifdef __x86_64__
 #define MC_PC gregs[REG_RIP]
+#elif __arm__
+#define MC_PC arm_pc
+#endif
