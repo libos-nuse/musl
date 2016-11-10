@@ -76,8 +76,8 @@ endif
 
 # exclude some files for frankenlibc
 BASE_SRCS := $(filter-out $(LKL_EXCLUDE),$(sort $(wildcard $(BASE_SRCS) $(LKL_INCLUDE))))
-BASE_OBJS := $(patsubst %.c,%.o,$(BASE_SRCS))
-ARCH_SRCS = $(filter-out $(LKL_EXCLUDE),$(wildcard $(srcdir)/src/*/$(ARCH)/*.[csS]))
+BASE_OBJS = $(patsubst $(srcdir)/%,%.o,$(basename $(BASE_SRCS)))
+ARCH_SRCS := $(filter-out $(LKL_EXCLUDE),$(ARCH_SRCS))
 ARCH_OBJS = $(patsubst $(srcdir)/%,%.o,$(basename $(ARCH_SRCS)))
 REPLACED_OBJS = $(sort $(subst /$(ARCH)/,/,$(ARCH_OBJS)))
 OBJS := $(addprefix obj/, $(filter-out $(REPLACED_OBJS), $(sort $(BASE_OBJS) $(ARCH_OBJS))))

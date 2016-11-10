@@ -135,7 +135,7 @@ syslibdir='/lib'
 tools=
 tool_libs=
 target=
-lkl_dir=
+lkl_dir=none
 optimize=auto
 debug=no
 warnings=no
@@ -330,13 +330,12 @@ printf "yes\n"
 
 CFLAGS_LKL0="-DCONFIG_LKL -I./arch/lkl"
 CFLAGS_LKL1="-I$lkl_dir/usr/include"
-LKL_EXCLUDE="$srcdir/src/malloc/% $srcdir/src/unistd/_exit.c\
- $srcdir/src/internal/syscall.c $srcdir/src/internal/x86_64/syscall.s\
- $srcdir/src/thread/__syscall_cp.c $srcdir/src/signal/kill.c \
- $srcdir/src/locale/dcngettext.c \
- $srcdir/src/errno/__errno_location.c\
- $srcdir/src/thread/x86_64/clone.s \
- $srcdir/src/misc/getpriority.c $srcdir/src/misc/setpriority.c"
+LKL_EXCLUDE="$srcdir/src/malloc/malloc.c $srcdir/src/malloc/posix_memalign.c \
+ $srcdir/src/malloc/calloc.c \
+ $srcdir/src/internal/x86_64/syscall.s $srcdir/src/thread/__syscall_cp.c \
+ $srcdir/src/unistd/_exit.c \
+ $srcdir/src/thread/clone.c $srcdir/src/thread/x86_64/clone.s \
+ $srcdir/src/linux/clone.c"
 
 if test "$ARCH" = arm ; then
 LKL_EXCLUDE="$LKL_EXCLUDE $srcdir/src/thread/__set_thread_area.c"
@@ -347,7 +346,9 @@ LKL_INCLUDE="$srcdir/arch/lkl/src/*.c"
 
 else
 printf "no\n"
+if test $lkl_dir != "none" ; then
 fail "$0: error: cannot find lkl header file shared library at $lkl_dir"
+fi
 fi
 
 #
