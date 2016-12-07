@@ -12,7 +12,6 @@ weak_alias(dummy, __funcs_on_exit);
 weak_alias(dummy, __stdio_exit);
 weak_alias(dummy, _fini);
 
-#if !defined(CONFIG_LKL) || defined (RUMPRUN)
 __attribute__((__weak__, __visibility__("hidden")))
 extern void (*const __fini_array_start)(void), (*const __fini_array_end)(void);
 
@@ -25,14 +24,11 @@ static void libc_exit_fini(void)
 }
 
 weak_alias(libc_exit_fini, __libc_exit_fini);
-#endif
 
 _Noreturn void exit(int code)
 {
 	__funcs_on_exit();
-#if !defined(CONFIG_LKL) || defined (RUMPRUN)
 	__libc_exit_fini();
-#endif
 	__stdio_exit();
 	_Exit(code);
 }

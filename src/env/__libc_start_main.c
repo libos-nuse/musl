@@ -9,12 +9,10 @@
 void __init_tls(size_t *);
 
 static void dummy(void) {}
-#if !defined(CONFIG_LKL) || defined (RUMPRUN)
 weak_alias(dummy, _init);
 
 __attribute__((__weak__, __visibility__("hidden")))
 extern void (*const __init_array_start)(void), (*const __init_array_end)(void);
-#endif
 
 static void dummy1(void *p) {}
 weak_alias(dummy1, __init_ssp);
@@ -55,7 +53,6 @@ void __init_libc(char **envp, char *pn)
 	libc.secure = 1;
 }
 
-#ifndef CONFIG_LKL
 static void libc_start_init(void)
 {
 	_init();
@@ -66,6 +63,7 @@ static void libc_start_init(void)
 
 weak_alias(libc_start_init, __libc_start_init);
 
+#ifndef CONFIG_LKL
 int __libc_start_main(int (*main)(int,char **,char **), int argc, char **argv)
 {
 	char **envp = argv+argc+1;
