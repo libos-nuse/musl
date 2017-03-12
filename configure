@@ -325,11 +325,11 @@ esac
 # Configure LKL (linux kernel library) options
 #
 printf "checking for header files of linux kernel library (lkl)... "
-if test -d "$lkl_dir" && test -f "$lkl_dir/usr/include/asm/syscalls.h" ; then
+if test -d "$lkl_dir" && test -f "$lkl_dir/include/asm/syscalls.h" ; then
 printf "yes\n"
 
 CFLAGS_LKL0="-DCONFIG_LKL -I./arch/lkl"
-CFLAGS_LKL1="-I$lkl_dir/usr/include"
+CFLAGS_LKL1="-I$lkl_dir/include"
 LKL_EXCLUDE="$srcdir/src/malloc/malloc.c $srcdir/src/malloc/posix_memalign.c \
  $srcdir/src/malloc/calloc.c \
  $srcdir/src/internal/x86_64/syscall.s $srcdir/src/thread/__syscall_cp.c \
