@@ -113,6 +113,9 @@ _Noreturn void __pthread_exit(void *result)
 		__unmapself(self->map_base, self->map_size);
 	}
 
+void	bmk_sched_exit_withtls(void) __attribute__((__noreturn__));
+	bmk_sched_exit_withtls();
+
 	for (;;) __syscall(SYS_exit, 0);
 }
 

@@ -1,7 +1,8 @@
 #include "pthread_impl.h"
 
-int  rumpuser_thread_create(void *(*f)(void *), void *, const char *, int,
-			    int, int, void **);
+struct bmk_thread *bmk_sched_create_withtls(const char *, void *, int,
+				    void (*)(void *), void *,
+				    void *, unsigned long, void *);
 
 int __clone(int (*func)(void *), void *stack, int flags, void *arg, ...)
 {
@@ -9,9 +10,11 @@ int __clone(int (*func)(void *), void *stack, int flags, void *arg, ...)
 	void *tid;
 	struct pthread *self = arg;
 
-	ret = rumpuser_thread_create((void *(*)(void *))func, self,
-				     "__clone", 0, 0, -1, &tid);
+	tid = bmk_sched_create_withtls("__clone", NULL, 1,
+				       (void (*)(void *))func, self,
+				       stack, self->stack_size, self);
 
-	self->tid = *(int *)tid;
+
+	self->tid = (uintptr_t)tid;
 	return ret;
 }

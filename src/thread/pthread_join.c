@@ -7,6 +7,12 @@ int __pthread_setcancelstate(int, int *);
 
 int __pthread_join(pthread_t t, void **res)
 {
+	struct bmk_thread;
+	void	bmk_sched_join(struct bmk_thread *);
+	bmk_sched_join((struct bmk_thread *)t->tid);
+	if (res) *res = t->result;
+	return 0;
+
 	int tmp, cs;
 	__pthread_testcancel();
 	__pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cs);

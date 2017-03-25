@@ -1,7 +1,9 @@
+void	*bmk_sched_gettcb(void);
+
 static inline struct pthread *__pthread_self()
 {
 	struct pthread *self;
-	__asm__ __volatile__ ("mov %%fs:0,%0" : "=r" (self) );
+	self = bmk_sched_gettcb();
 	return self;
 }
 

@@ -331,7 +331,7 @@ printf "yes\n"
 CFLAGS_LKL0="-DCONFIG_LKL -I./arch/lkl"
 CFLAGS_LKL1="-I$lkl_dir/include"
 LKL_EXCLUDE="$srcdir/src/malloc/malloc.c $srcdir/src/malloc/posix_memalign.c \
- $srcdir/src/malloc/calloc.c \
+ $srcdir/src/malloc/calloc.c $srcdir/src/thread/x86_64/__set_thread_area.s \
  $srcdir/src/internal/x86_64/syscall.s $srcdir/src/thread/__syscall_cp.c \
  $srcdir/src/unistd/_exit.c \
  $srcdir/src/thread/clone.c $srcdir/src/thread/x86_64/clone.s \

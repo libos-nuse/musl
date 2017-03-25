@@ -142,7 +142,7 @@ void __block_all_sigs(void *);
 void __block_app_sigs(void *);
 void __restore_sigs(void *);
 
-#define DEFAULT_STACK_SIZE 81920
+#define DEFAULT_STACK_SIZE 3*1024*1024 //81920
 #define DEFAULT_GUARD_SIZE PAGE_SIZE
 
 #define __ATTRP_C11_THREAD ((void*)(uintptr_t)-1)
