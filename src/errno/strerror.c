@@ -31,8 +31,7 @@ char *__strerror_l(int e, locale_t loc)
 
 char *strerror(int e)
 {
-	/* FIXME: should use CURRENT_LOCALE with pthread_self() impl */
-	return __strerror_l(e, C_LOCALE);
+	return __strerror_l(e, CURRENT_LOCALE);
 }
 
 weak_alias(__strerror_l, strerror_l);

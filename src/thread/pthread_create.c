@@ -113,8 +113,10 @@ _Noreturn void __pthread_exit(void *result)
 		__unmapself(self->map_base, self->map_size);
 	}
 
-void	bmk_sched_exit_withtls(void) __attribute__((__noreturn__));
-	bmk_sched_exit_withtls();
+#ifdef CONFIG_LKL
+	void rumprun_thread_exit_withtls(void)  __attribute__((__noreturn__));
+	rumprun_thread_exit_withtls();
+#endif
 
 	for (;;) __syscall(SYS_exit, 0);
 }

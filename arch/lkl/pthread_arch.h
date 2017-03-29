@@ -1,9 +1,16 @@
-void	*bmk_sched_gettcb(void);
+#include "libc.h"
+
+void *rumprun_thread_gettcb(void);
+extern pthread_t main_td;
 
 static inline struct pthread *__pthread_self()
 {
 	struct pthread *self;
-	self = bmk_sched_gettcb();
+
+	if (!libc.threaded)
+		return main_td;
+
+	self = (struct pthread *)rumprun_thread_gettcb();
 	return self;
 }
 
