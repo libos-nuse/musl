@@ -32,6 +32,12 @@ struct passwd *getpwuid(uid_t uid)
 struct passwd *getpwnam(const char *name)
 {
 	struct passwd *res;
+#ifdef CONFIG_LKL
+	/* FIXME: tentatively fill the info for root */
+	if (strcmp(name, "root") == 0)
+		return &pw;
+#else
 	__getpw_a(name, 0, &pw, &line, &size, &res);
+#endif
 	return res;
 }
