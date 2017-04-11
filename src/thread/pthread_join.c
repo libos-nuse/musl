@@ -4,14 +4,14 @@
 int __munmap(void *, size_t);
 void __pthread_testcancel(void);
 int __pthread_setcancelstate(int, int *);
+int  rumpuser_thread_join(void *);
 
 int __pthread_join(pthread_t t, void **res)
 {
 	int tmp, cs;
 
 #ifdef CONFIG_LKL
-	void rumprun_thread_join(void *);
-	rumprun_thread_join(t->tid);
+	rumpuser_thread_join(t->tid);
 	if (res) *res = t->result;
 	return 0;
 #endif
