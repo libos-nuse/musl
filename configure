@@ -337,6 +337,11 @@ LKL_EXCLUDE="$srcdir/src/malloc/malloc.c $srcdir/src/malloc/posix_memalign.c \
  $srcdir/src/thread/clone.c $srcdir/src/thread/x86_64/clone.s \
  $srcdir/src/linux/clone.c $srcdir/src/thread/__set_thread_area.c"
 
+if test "$ARCH" = arm ; then
+LKL_EXCLUDE="$LKL_EXCLUDE $srcdir/src/thread/arm/__set_thread_area.c"
+echo "";
+fi
+
 LKL_INCLUDE="$srcdir/arch/lkl/src/*.c"
 
 else
