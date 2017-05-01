@@ -7,7 +7,9 @@ static inline struct pthread *__pthread_self()
 {
 	struct pthread *self;
 
+#ifdef RUMPRUN
 	if (!libc.threaded)
+#endif	/* RUMPRUN */
 		return main_td;
 
 	self = (struct pthread *)rumprun_thread_gettcb();
