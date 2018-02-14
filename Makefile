@@ -27,7 +27,7 @@ LDSO_OBJS = $(patsubst $(srcdir)/%,obj/%.lo,$(basename $(LDSO_SRCS)))
 OBJS = $(addprefix obj/, $(filter-out $(REPLACED_OBJS), $(sort $(BASE_OBJS) $(ARCH_OBJS))))
 AOBJS = $(OBJS)
 LOBJS = $(OBJS:.o=.lo)
-GENH = obj/include/bits/alltypes.h
+GENH = obj/include/bits/alltypes.h obj/include/bits/stat.h
 GENH_INT = obj/src/internal/version.h
 IMPH = $(addprefix $(srcdir)/, src/internal/stdio_impl.h src/internal/pthread_impl.h src/internal/libc.h)
 
@@ -100,6 +100,9 @@ clean:
 
 distclean: clean
 	rm -f config.mak
+
+obj/include/bits/stat.h: $(srcdir)/arch/lkl/bits/stat.h
+	cp -f $^ $@
 
 obj/include/bits/alltypes.h: $(srcdir)/arch/$(ARCH)/bits/alltypes.h.in $(srcdir)/include/alltypes.h.in $(srcdir)/tools/mkalltypes.sed
 	sed -f $(srcdir)/tools/mkalltypes.sed $(srcdir)/arch/$(ARCH)/bits/alltypes.h.in $(srcdir)/include/alltypes.h.in > $@
@@ -216,6 +219,9 @@ $(DESTDIR)$(includedir)/bits/%: $(srcdir)/arch/generic/bits/%
 	$(INSTALL) -D -m 644 $< $@
 
 $(DESTDIR)$(includedir)/bits/%: obj/include/bits/%
+	$(INSTALL) -D -m 644 $< $@
+
+$(DESTDIR)$(includedir)/bits/stat.h: obj/include/bits/stat.h
 	$(INSTALL) -D -m 644 $< $@
 
 $(DESTDIR)$(includedir)/%: $(srcdir)/include/%
