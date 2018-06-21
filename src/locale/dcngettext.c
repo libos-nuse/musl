@@ -108,7 +108,7 @@ static char *dummy_gettextdomain()
 	return "messages";
 }
 
-weak_alias(dummy_gettextdomain, __gettextdomain);
+weak_alias0(dummy_gettextdomain, __gettextdomain);
 
 const unsigned char *__map_file(const char *, size_t *);
 int __munmap(void *, size_t);

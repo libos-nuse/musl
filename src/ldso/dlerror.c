@@ -55,7 +55,7 @@ void __dl_seterr(const char *fmt, ...)
 __attribute__((__visibility__("hidden")))
 int __dl_invalid_handle(void *);
 
-static int stub_invalid_handle(void *h)
+int stub_invalid_handle(void *h)
 {
 	__dl_seterr("Invalid library handle %p", (void *)h);
 	return 1;

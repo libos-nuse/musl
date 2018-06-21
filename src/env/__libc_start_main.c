@@ -9,13 +9,18 @@
 void __init_tls(size_t *);
 
 static void dummy(void) {}
-weak_alias(dummy, _init);
+weak_alias0(dummy, _init);
 
+#ifndef __APPLE__
 __attribute__((__weak__, __visibility__("hidden")))
 extern void (*const __init_array_start)(void), (*const __init_array_end)(void);
+#else
+__attribute__((__visibility__("hidden")))
+void (*const __init_array_start)(void), (*const __init_array_end)(void);
+#endif
 
 static void dummy1(void *p) {}
-weak_alias(dummy1, __init_ssp);
+weak_alias0(dummy1, __init_ssp);
 
 #define AUX_CNT 38
 
@@ -53,7 +58,7 @@ void __init_libc(char **envp, char *pn)
 	libc.secure = 1;
 }
 
-static void libc_start_init(void)
+void libc_start_init(void)
 {
 	_init();
 	uintptr_t a = (uintptr_t)&__init_array_start;

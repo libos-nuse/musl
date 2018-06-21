@@ -2,7 +2,7 @@
 #include "libc.h"
 
 static void dummy(FILE *f) { }
-weak_alias(dummy, __unlist_locked_file);
+weak_alias0(dummy, __unlist_locked_file);
 
 int fclose(FILE *f)
 {

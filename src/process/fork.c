@@ -9,7 +9,7 @@ static void dummy(int x)
 {
 }
 
-weak_alias(dummy, __fork_handler);
+weak_alias0(dummy, __fork_handler);
 
 pid_t fork(void)
 {

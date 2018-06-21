@@ -2,9 +2,11 @@
 .global __setjmp
 .global _setjmp
 .global setjmp
+#ifndef __APPLE__
 .type __setjmp,@function
 .type _setjmp,@function
 .type setjmp,@function
+#endif
 __setjmp:
 _setjmp:
 setjmp:

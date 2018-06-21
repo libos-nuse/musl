@@ -84,7 +84,7 @@ fi
 tryflag () {
 printf "checking whether compiler accepts %s... " "$2"
 echo "typedef int x;" > "$tmpc"
-if $CC $CFLAGS_TRY $2 -c -o /dev/null "$tmpc" >/dev/null 2>&1 ; then
+if $CC -Werror $CFLAGS_TRY $2 -c -o /dev/null "$tmpc" >/dev/null 2>&1 ; then
 printf "yes\n"
 eval "$1=\"\${$1} \$2\""
 eval "$1=\${$1# }"
@@ -311,6 +311,7 @@ arm*) ARCH=arm ;;
 aarch64*) ARCH=aarch64 ;;
 i?86*) ARCH=i386 ;;
 x86_64-x32*|x32*|x86_64*x32) ARCH=x32 ;;
+x86_64-apple-darwin*) ARCH=x86_64-darwin ;;
 x86_64*) ARCH=x86_64 ;;
 mips*) ARCH=mips ;;
 microblaze*) ARCH=microblaze ;;
@@ -343,6 +344,11 @@ echo "";
 fi
 
 LKL_INCLUDE="$srcdir/arch/lkl/src/*.c"
+
+if [[ "$target" = "x86_64-apple-darwin"* ]] ; then
+LKL_INCLUDE="$LKL_INCLUDE $srcdir/src/setjmp/x86_64/*.s"
+fi
+
 
 else
 printf "no\n"

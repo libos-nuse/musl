@@ -3,8 +3,8 @@
 static void dummy(struct __ptcb *cb)
 {
 }
-weak_alias(dummy, __do_cleanup_push);
-weak_alias(dummy, __do_cleanup_pop);
+weak_alias0(dummy, __do_cleanup_push);
+weak_alias0(dummy, __do_cleanup_pop);
 
 void _pthread_cleanup_push(struct __ptcb *cb, void (*f)(void *), void *x)
 {

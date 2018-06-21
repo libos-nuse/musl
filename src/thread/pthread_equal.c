@@ -2,7 +2,7 @@
 #include <threads.h>
 #include "libc.h"
 
-static int __pthread_equal(pthread_t a, pthread_t b)
+int __pthread_equal(pthread_t a, pthread_t b)
 {
 	return a==b;
 }

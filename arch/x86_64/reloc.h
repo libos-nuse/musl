@@ -14,7 +14,13 @@
 #define CRTJMP(pc,sp) __asm__ __volatile__( \
 	"mov %1,%%rsp ; jmp *%0" : : "r"(pc), "r"(sp) : "memory" )
 
+#ifndef __APPLE__
 #define GETFUNCSYM(fp, sym, got) __asm__ ( \
 	".hidden " #sym "\n" \
 	"	lea " #sym "(%%rip),%0\n" \
 	: "=r"(*fp) : : "memory" )
+#else
+#define GETFUNCSYM(fp, sym, got) __asm__ ( \
+	"	lea " #sym "(%%rip),%0\n" \
+	: "=r"(*fp) : : "memory" )
+#endif

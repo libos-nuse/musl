@@ -13,11 +13,11 @@ int __mprotect(void *, size_t, int);
 static void dummy_0()
 {
 }
-weak_alias(dummy_0, __acquire_ptc);
-weak_alias(dummy_0, __release_ptc);
-weak_alias(dummy_0, __pthread_tsd_run_dtors);
-weak_alias(dummy_0, __do_orphaned_stdio_locks);
-weak_alias(dummy_0, __dl_thread_cleanup);
+weak_alias0(dummy_0, __acquire_ptc);
+weak_alias0(dummy_0, __release_ptc);
+weak_alias0(dummy_0, __pthread_tsd_run_dtors);
+weak_alias0(dummy_0, __do_orphaned_stdio_locks);
+weak_alias0(dummy_0, __dl_thread_cleanup);
 
 _Noreturn void __pthread_exit(void *result)
 {
@@ -168,16 +168,16 @@ static int start_c11(void *p)
 
 /* pthread_key_create.c overrides this */
 static volatile size_t dummy = 0;
-weak_alias(dummy, __pthread_tsd_size);
+weak_alias0(dummy, __pthread_tsd_size);
 static void *dummy_tsd[1] = { 0 };
-weak_alias(dummy_tsd, __pthread_tsd_main);
+weak_alias0(dummy_tsd, __pthread_tsd_main);
 
 volatile int __block_new_threads = 0;
 
 static FILE *volatile dummy_file = 0;
-weak_alias(dummy_file, __stdin_used);
-weak_alias(dummy_file, __stdout_used);
-weak_alias(dummy_file, __stderr_used);
+weak_alias0(dummy_file, __stdin_used);
+weak_alias0(dummy_file, __stdout_used);
+weak_alias0(dummy_file, __stderr_used);
 
 static void init_file_lock(FILE *f)
 {

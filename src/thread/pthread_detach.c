@@ -3,7 +3,7 @@
 
 int __pthread_join(pthread_t, void **);
 
-static int __pthread_detach(pthread_t t)
+int __pthread_detach(pthread_t t)
 {
 	/* Cannot detach a thread that's already exiting */
 	if (a_swap(t->exitlock, 1))

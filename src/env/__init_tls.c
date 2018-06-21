@@ -71,7 +71,7 @@ typedef Elf32_Phdr Phdr;
 typedef Elf64_Phdr Phdr;
 #endif
 
-static void static_init_tls(size_t *aux)
+void static_init_tls(size_t *aux)
 {
 	unsigned char *p;
 	size_t n;

@@ -181,7 +181,7 @@ lib/libc.a: $(AOBJS)
 
 $(EMPTY_LIBS):
 	rm -f $@
-	$(AR) rc $@
+	$(AR) rc $@ ../rumpobj/linux/empty.o
 
 lib/%.o: obj/crt/%.o
 	cp $< $@

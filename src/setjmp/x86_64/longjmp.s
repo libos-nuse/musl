@@ -1,8 +1,10 @@
 /* Copyright 2011-2012 Nicholas J. Kain, licensed under standard MIT license */
 .global _longjmp
 .global longjmp
+#ifndef __APPLE__
 .type _longjmp,@function
 .type longjmp,@function
+#endif
 _longjmp:
 longjmp:
 	mov %rsi,%rax           /* val will be longjmp return */
